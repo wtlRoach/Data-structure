@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1450319572 source:c:\users\wen-ting\desktop\imageprocessingtest\imageprocessingtest\datastructtest\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<math.h>
+
+1450334788 source:c:\users\wen-ting\documents\github\datastructtest\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<math.h>
+
