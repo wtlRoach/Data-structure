@@ -506,6 +506,57 @@ int CompareBinaryTree(btTree dataTreeOne, btTree dataTreeTwo){
     return compareResult;
 }
 
+/*=====================================Thread binary tree==========================================*/
+/*
+void ThreadBinaryTree(btTree originalDataTree){
+    btTree treeBuf;
+    if(!(originalDataTree -> m_leftNull))
+    {
+        treeBuf = ThreadLoop(originalDataTree -> m_leftPtr);
+        while(treeBuf -> m_leftNull)
+        {
+            treeBuf = ThreadLoop(treeBuf -> m_leftPtr);
+        }
+        treeBuf -> m_leftPtr = originalDataTree;
+        treeBuf -> m_leftNull = 0;
+    } else {}
+    if(!(originalDataTree -> m_rightNull))
+    {
+        treeBuf = ThreadLoop(originalDataTree -> m_rightPtr);
+        while(treeBuf -> m_rightNull)
+        {
+            treeBuf = ThreadLoop(treeBuf -> m_rightPtr);
+        }
+        treeBuf -> m_rightPtr = originalDataTree;
+    } else {}
+}
+
+
+btTree ThreadLoop(btTree originalDataTree){
+    btTree treeBuf;
+    if(!(originalDataTree -> m_leftNull))
+    {
+        treeBuf = ThreadLoop(originalDataTree -> m_leftPtr);
+    }
+    else
+    {
+        treeBuf = originalDataTree;
+        return treeBuf;
+    }
+    if(!(originalDataTree -> m_rightNull))
+    {
+        treeBuf = ThreadLoop(originalDataTree -> m_rightPtr);
+    }
+    else
+    {
+        treeBuf = originalDataTree;
+        return treeBuf;
+    }
+}
+*/
+/*============================================Sort================================================*/
+
+
 /*================================================================================================*/
 /* Main program */
 /*================================================================================================*/
