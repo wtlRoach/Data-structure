@@ -10,8 +10,8 @@
 
 #define MOVE_POS (0x1u <<8)
 
-void testField(unsigned int testVar)
-{
+void testField(unsigned int testVar){
+
     unsigned int testResult = testVar;
     testResult &= MOVE_POS;
     printf(" testVar = %d\n", testVar);
@@ -25,10 +25,10 @@ void testField(unsigned int testVar)
 /*================================================================================================*/
 
 int pathRec[12][12];
-int maze[12][12]=
+int maze[12][12]={
 
 /*Static exit*/
-/*{
+/*
 {1,1,1,1,1,1,1,1,1,1,1,1},
 {1,0,0,0,1,0,0,0,0,0,0,1},
 {0,0,1,0,1,0,1,1,1,1,0,1},
@@ -44,7 +44,7 @@ int maze[12][12]=
 };
 */
 /*Dynamic exit*/
-{
+
 {1,1,1,1,1,1,1,1,1,1,1,1},
 {1,0,0,0,1,0,0,0,0,0,0,1},
 {0,0,1,0,1,0,1,1,1,1,0,1},
@@ -58,9 +58,7 @@ int maze[12][12]=
 {1,0,0,0,0,0,0,1,0,0,0,1},
 {1,1,1,1,1,1,1,1,1,1,1,1}
 };
-
-int* mouseMove(int PosY, int PosX)
-{
+int* mouseMove(int PosY, int PosX){
     int buf[2] = {PosY, PosX};
 	if(maze[buf[0]-1][(buf[1])] != 1 && pathRec[buf[0]-1][(buf[1])] < 1)
 	{
@@ -104,9 +102,7 @@ int* mouseMove(int PosY, int PosX)
     }
     return buf;
 }
-
-void MouseGO()
-{
+void MouseGO(){
     int nowPosX = 0;
 	int nowPosY = 2;
     int endPosY = 9;        /* Using for dynamic exit. */
@@ -159,15 +155,12 @@ void MouseGO()
 /* be removed when I figure out what's going with the error of NULL. */
 /*================================================================================================*/
 
-typedef enum t_BinaryMethodType
-{
+typedef enum t_BinaryMethodType{
     m_inOrder,
     m_preOrder,
     m_postOrder,
     m_levelOrder
 }t_BinaryMethodType;
-
-
 typedef struct tree{
     int m_nodeData;
     int m_leftNull;       /*For test*/
@@ -175,7 +168,6 @@ typedef struct tree{
     struct tree * m_leftPtr;
     struct tree * m_rightPtr;
 }t_TreeNode;
-
 typedef t_TreeNode* btTree;        /* For convenience of pointer operation. */
 
 static btTree g_DataTree;                /*The value here is not zero inside the function.*/
@@ -183,8 +175,8 @@ static btTree g_CopyTree;
 
 /*======================================Binary tree create========================================*/
 
-btTree AddNode(btTree dataTree, int nodeData)               /* Null is illegal in this IDE, so this function seems correct but it can't be worked. */
-{
+btTree AddNode(btTree dataTree, int nodeData){              /* Null is illegal in this IDE, so this function seems correct but it can't be worked. */
+
     btTree previousNode;
     btTree currentNode = dataTree;
     btTree outputTreeBuf;
@@ -237,8 +229,8 @@ btTree AddNode(btTree dataTree, int nodeData)               /* Null is illegal i
     }
 }
 
-btTree AddNodeTest(btTree addDataTree, int nodeData)    /* Using flag replace NULL pointer. */
-{
+btTree AddNodeTest(btTree addDataTree, int nodeData){    /* Using flag replace NULL pointer. */
+
     btTree previousNode;
     btTree currentNode = addDataTree;
     btTree outputTreeBuf;
@@ -292,8 +284,8 @@ btTree AddNodeTest(btTree addDataTree, int nodeData)    /* Using flag replace NU
     }
 }
 
-void BinaryTreeCreate(void)             /* Create binary tree which only has left side. */
-{
+void BinaryTreeCreate(void){             /* Create binary tree which only has left side. */
+
     int index = 0;
     int dataLen = 8;
     int dataTest[8] = {1,5,4,3,2,6,7,8};
@@ -307,8 +299,8 @@ void BinaryTreeCreate(void)             /* Create binary tree which only has lef
 
 /*======================================Binary tree visit=========================================*/
 
-void inorderPrintTree(btTree inorderDataTree)    /* Root in the middle. */
-{
+void inorderPrintTree(btTree inorderDataTree){    /* Root in the middle. */
+
     if (inorderDataTree != NULL)
     {
         if (!(inorderDataTree -> m_leftNull))
@@ -323,8 +315,8 @@ void inorderPrintTree(btTree inorderDataTree)    /* Root in the middle. */
     } else {}
 }
 
-void preorderPrintTree(btTree preorderDataTree)    /* Root in the first place. */
-{
+void preorderPrintTree(btTree preorderDataTree){    /* Root in the first place. */
+
     if (preorderDataTree != NULL)
     {
         printf("Element : %d\n", preorderDataTree -> m_nodeData);
@@ -339,8 +331,8 @@ void preorderPrintTree(btTree preorderDataTree)    /* Root in the first place. *
     } else {}
 }
 
-void postorderPrintTree(btTree postorderDataTree)    /* Root in the last place. */
-{
+void postorderPrintTree(btTree postorderDataTree){    /* Root in the last place. */
+
     if(postorderDataTree != NULL)
     {
         if (!(postorderDataTree -> m_leftNull))
@@ -360,8 +352,8 @@ void postorderPrintTree(btTree postorderDataTree)    /* Root in the last place. 
     } else {}
 }
 
-void levelorderPrintTree(btTree levelorderDataTree) /* Using the continuity of pointer data set to visit all nodes. */
-{
+void levelorderPrintTree(btTree levelorderDataTree){ /* Using the continuity of pointer data set to visit all nodes. */
+
     int printedF = -1;
     int printedB = -1;
     t_TreeNode* treeBuf[80];
@@ -393,8 +385,8 @@ void levelorderPrintTree(btTree levelorderDataTree) /* Using the continuity of p
     }
 }
 
-void VisitBinaryTree(btTree dataTree, t_BinaryMethodType visitType)
-{
+void VisitBinaryTree(btTree dataTree, t_BinaryMethodType visitType){
+
     switch(visitType)
     {
         case 0:
@@ -414,8 +406,8 @@ void VisitBinaryTree(btTree dataTree, t_BinaryMethodType visitType)
 
 /*======================================Binary tree copy==========================================*/
 
-btTree inorderCopyTree(btTree inorderSourceTree)
-{
+btTree inorderCopyTree(btTree inorderSourceTree){
+
     if(inorderSourceTree == NULL)
     {
         printf("Data tree is empty.\n");
@@ -437,15 +429,15 @@ btTree inorderCopyTree(btTree inorderSourceTree)
     return g_CopyTree;
 }
 
-btTree preorderCopyTree(btTree preorderSourceTree)
-{
+btTree preorderCopyTree(btTree preorderSourceTree){
+
     if(preorderSourceTree == NULL)
     {
         printf("Data tree is empty.\n");
         return;
     } else {}
     g_CopyTree -> m_nodeData = preorderSourceTree -> m_nodeData;
-    printf("Data from preorderCopyTree : %d", g_CopyTree -> m_nodeData);
+    printf("Data from preorderCopyTree : %d\n", g_CopyTree -> m_nodeData);
     if(!preorderSourceTree -> m_leftNull)
     {
         g_CopyTree -> m_leftPtr = preorderCopyTree(preorderSourceTree -> m_leftPtr);
@@ -460,8 +452,8 @@ btTree preorderCopyTree(btTree preorderSourceTree)
     return g_CopyTree;
 }
 
-btTree postorderCopyTree(btTree postorderSourceTree)
-{
+btTree postorderCopyTree(btTree postorderSourceTree){
+
     if(postorderSourceTree == NULL)
     {
         printf("Data tree is empty.\n");
@@ -481,13 +473,13 @@ btTree postorderCopyTree(btTree postorderSourceTree)
     } else {}
 
     g_CopyTree -> m_nodeData = postorderSourceTree -> m_nodeData;
-    printf("Data from postorderCopyTree : %d", g_CopyTree -> m_nodeData);
+    printf("Data from postorderCopyTree : %d\n", g_CopyTree -> m_nodeData);
 
     return g_CopyTree;
 }
 
-void CopyBinaryTree(btTree dataTree, t_BinaryMethodType visitType)
-{
+void CopyBinaryTree(btTree dataTree, t_BinaryMethodType visitType){
+
     g_CopyTree = malloc(sizeof(t_TreeNode));                /* Initialize memory space for operating. */
     switch(visitType)
     {
@@ -503,7 +495,16 @@ void CopyBinaryTree(btTree dataTree, t_BinaryMethodType visitType)
     };
 }
 
+/*=====================================Binary tree compare=========================================*/
 
+int CompareBinaryTree(btTree dataTreeOne, btTree dataTreeTwo){
+    int compareResult = 0;
+    compareResult = ((dataTreeOne && dataTreeTwo) || (!dataTreeOne && !dataTreeTwo)) ||                                                      /* Same address in memory. */
+                        (((dataTreeOne -> m_nodeData && dataTreeTwo -> m_nodeData)) &&                                                       /* Same data. */
+                            ((CompareBinaryTree(dataTreeOne -> m_leftPtr, dataTreeTwo -> m_leftPtr))) &&              /* Compare the left node. */
+                                ((CompareBinaryTree(dataTreeOne -> m_rightPtr, dataTreeTwo -> m_rightPtr))));       /* Compare the right node. */
+    return compareResult;
+}
 
 /*================================================================================================*/
 /* Main program */
