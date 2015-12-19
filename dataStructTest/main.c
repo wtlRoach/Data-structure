@@ -426,9 +426,8 @@ btTree inorderCopyTree(btTree inorderSourceTree)
         g_CopyTree -> m_leftPtr = inorderCopyTree(inorderSourceTree -> m_leftPtr);
         g_CopyTree -> m_leftNull = 0;
     } else {}
-
     g_CopyTree -> m_nodeData = inorderSourceTree -> m_nodeData;
-    printf("Data from inorderCopyTree : %d", g_CopyTree -> m_nodeData);
+    printf("Data from inorderCopyTree : %d\n", g_CopyTree -> m_nodeData);
 
     if(!inorderSourceTree -> m_rightNull)
     {
@@ -489,6 +488,7 @@ btTree postorderCopyTree(btTree postorderSourceTree)
 
 void CopyBinaryTree(btTree dataTree, t_BinaryMethodType visitType)
 {
+    g_CopyTree = malloc(sizeof(t_TreeNode));                /* Initialize memory space for operating. */
     switch(visitType)
     {
         case 0:
