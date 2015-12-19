@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
+
 /*================================================================================================*/
 /* Test field. */
 /*================================================================================================*/
@@ -154,7 +155,8 @@ void MouseGO()
 
 /*================================================================================================*/
 /* AddNode can't run correctly, but AddNodeTest can show the correct result if we used debug */
-/* step-by-step when function is executing. */
+/* step-by-step when function is executing. Using leftNull prevent bugs from CodeBlocks, they'll */
+/* be removed when I figure out what's going with the error of NULL. */
 /*================================================================================================*/
 
 typedef enum t_BinaryMethodType
@@ -176,8 +178,8 @@ typedef struct tree{
 
 typedef t_TreeNode* btTree;        /* For convenience of pointer operation. */
 
-btTree g_DataTree;                /*The value here is not zero inside the function.*/
-
+static btTree g_DataTree;                /*The value here is not zero inside the function.*/
+static btTree g_CopyTree;
 
 /*======================================Binary tree create========================================*/
 
@@ -412,6 +414,96 @@ void VisitBinaryTree(btTree dataTree, t_BinaryMethodType visitType)
 
 /*======================================Binary tree copy==========================================*/
 
+btTree inorderCopyTree(btTree inorderSourceTree)
+{
+    if(inorderSourceTree == NULL)
+    {
+        printf("Data tree is empty.\n");
+        return;
+    } else {}
+    if(!inorderSourceTree -> m_leftNull)
+    {
+        g_CopyTree -> m_leftPtr = inorderCopyTree(inorderSourceTree -> m_leftPtr);
+        g_CopyTree -> m_leftNull = 0;
+    } else {}
+
+    g_CopyTree -> m_nodeData = inorderSourceTree -> m_nodeData;
+    printf("Data from inorderCopyTree : %d", g_CopyTree -> m_nodeData);
+
+    if(!inorderSourceTree -> m_rightNull)
+    {
+        g_CopyTree -> m_rightPtr = inorderCopyTree(inorderSourceTree -> m_rightPtr);
+        g_CopyTree -> m_rightNull = 0;
+    } else {}
+    return g_CopyTree;
+}
+
+btTree preorderCopyTree(btTree preorderSourceTree)
+{
+    if(preorderSourceTree == NULL)
+    {
+        printf("Data tree is empty.\n");
+        return;
+    } else {}
+    g_CopyTree -> m_nodeData = preorderSourceTree -> m_nodeData;
+    printf("Data from preorderCopyTree : %d", g_CopyTree -> m_nodeData);
+    if(!preorderSourceTree -> m_leftNull)
+    {
+        g_CopyTree -> m_leftPtr = preorderCopyTree(preorderSourceTree -> m_leftPtr);
+        g_CopyTree -> m_leftNull = 0;
+    } else {}
+
+    if(!preorderSourceTree -> m_rightNull)
+    {
+        g_CopyTree -> m_rightPtr = preorderCopyTree(preorderSourceTree -> m_rightPtr);
+        g_CopyTree -> m_rightNull = 0;
+    } else {}
+    return g_CopyTree;
+}
+
+btTree postorderCopyTree(btTree postorderSourceTree)
+{
+    if(postorderSourceTree == NULL)
+    {
+        printf("Data tree is empty.\n");
+        return;
+    } else {}
+
+    if(!postorderSourceTree -> m_leftNull)
+    {
+        g_CopyTree -> m_leftPtr = preorderCopyTree(postorderSourceTree -> m_leftPtr);
+        g_CopyTree -> m_leftNull = 0;
+    } else {}
+
+    if(!postorderSourceTree -> m_rightNull)
+    {
+        g_CopyTree -> m_rightPtr = preorderCopyTree(postorderSourceTree -> m_rightPtr);
+        g_CopyTree -> m_rightNull = 0;
+    } else {}
+
+    g_CopyTree -> m_nodeData = postorderSourceTree -> m_nodeData;
+    printf("Data from postorderCopyTree : %d", g_CopyTree -> m_nodeData);
+
+    return g_CopyTree;
+}
+
+void CopyBinaryTree(btTree dataTree, t_BinaryMethodType visitType)
+{
+    switch(visitType)
+    {
+        case 0:
+            inorderCopyTree(dataTree);
+            break;
+        case 1:
+            preorderCopyTree(dataTree);
+            break;
+        case 2:
+            postorderCopyTree(dataTree);
+            break;
+    };
+}
+
+
 
 /*================================================================================================*/
 /* Main program */
@@ -424,7 +516,7 @@ int main(int argc, char *argv[]) {
     /* Binary tree */
     BinaryTreeCreate();
     VisitBinaryTree(g_DataTree, m_inOrder);
-
+    CopyBinaryTree(g_DataTree, m_inOrder);
     /*testField(1);*/
 
 	system("pause");
