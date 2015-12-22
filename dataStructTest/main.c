@@ -9,14 +9,7 @@
 /*================================================================================================*/
 
 #define MOVE_POS (0x1u <<8)
-
-void testField(unsigned int testVar){
-
-    unsigned int testResult = testVar;
-    testResult &= MOVE_POS;
-    printf(" testVar = %d\n", testVar);
-    printf(" testResult = %d\n", testResult);
-}
+#define TEST_AREA 0
 
 /*================================================================================================*/
 
@@ -150,7 +143,7 @@ void MouseGO(){
 /*================================================================================================*/
 
 /*================================================================================================*/
-/* AddNode can't run correctly, but AddNodeTest can show the correct result if we used debug */
+/* AddNode can't run correctly, but AddNode can show the correct result if we used debug */
 /* step-by-step when function is executing. Using leftNull prevent bugs from CodeBlocks, they'll */
 /* be removed when I figure out what's going with the error of NULL. */
 /*================================================================================================*/
@@ -161,75 +154,27 @@ typedef enum t_BinaryMethodType{
     m_postOrder,
     m_levelOrder
 }t_BinaryMethodType;
-typedef struct tree{
+typedef struct t_TreeNode{
     int m_nodeData;
     int m_leftNull;       /*For test*/
     int m_rightNull;      /*For test*/
     struct tree * m_leftPtr;
     struct tree * m_rightPtr;
 }t_TreeNode;
+typedef enum t_HeapType{
+    m_MAX,
+    m_MIN
+}t_HeapType;
+
 typedef t_TreeNode* btTree;        /* For convenience of pointer operation. */
 
 static btTree g_DataTree;                /*The value here is not zero inside the function.*/
 static btTree g_CopyTree;
+static btTree g_threadTree;
 
 /*======================================Binary tree create========================================*/
 
-btTree AddNode(btTree dataTree, int nodeData){              /* Null is illegal in this IDE, so this function seems correct but it can't be worked. */
-
-    btTree previousNode;
-    btTree currentNode = dataTree;
-    btTree outputTreeBuf;
-
-    btTree newNode = (btTree)malloc(sizeof(btTree));
-    newNode -> m_nodeData = nodeData;
-    if(currentNode == NULL)
-    {
-        currentNode = newNode;
-        printf("Null currentNode->data = %d, nodeData = %d\n", currentNode -> m_nodeData, newNode -> m_nodeData);
-
-        return currentNode;                     /* tarTree can't be rewritten in this function, so here we return currentNode if tarTree is a tree with only one element.*/
-    }
-    else
-    {
-        printf("tarTree Data : %d, currentNdoe Data : %d \n",dataTree -> m_nodeData, currentNode -> m_nodeData);
-        outputTreeBuf = currentNode;
-        while(currentNode != NULL)
-        {
-            previousNode = currentNode;
-            if(currentNode -> m_nodeData < nodeData)
-            {
-                printf("Left, NowData : %d\n", currentNode -> m_nodeData);
-                printf("currentNode : %x\n", currentNode);
-                currentNode = currentNode -> m_leftPtr;
-                printf("Left, NewData : %d\n", nodeData);
-                printf("currentNode : %x\n", currentNode);
-            }
-            else if (currentNode -> m_nodeData > nodeData)
-            {
-                printf("Right, NowData : %d\n", currentNode -> m_nodeData);
-                printf("currentNode : %x\n", currentNode);
-                currentNode = currentNode -> m_rightPtr;
-                printf("Right, NewData : %d\n", nodeData);
-                printf("currentNode : %x\n", currentNode);
-            } else {}
-        }
-        printf("End While\n");
-        if(previousNode -> m_nodeData < nodeData)
-        {
-            previousNode -> m_leftPtr = newNode;
-            printf("Left, previousNode->data = %d, tarTree = %d\n", previousNode -> m_nodeData, (previousNode -> m_leftPtr) -> m_nodeData);
-        }
-        else if (previousNode -> m_nodeData > nodeData)
-        {
-            previousNode -> m_rightPtr = newNode;
-            printf("Right previousNode->data = %d, tarTree = %d\n", previousNode -> m_nodeData, (previousNode -> m_rightPtr) -> m_nodeData);
-        } else {}
-        return outputTreeBuf;
-    }
-}
-
-btTree AddNodeTest(btTree addDataTree, int nodeData){    /* Using flag replace NULL pointer. */
+btTree AddNode(btTree addDataTree, int nodeData){    /* Using flag replace NULL pointer. */
 
     btTree previousNode;
     btTree currentNode = addDataTree;
@@ -255,18 +200,13 @@ btTree AddNodeTest(btTree addDataTree, int nodeData){    /* Using flag replace N
             previousNode = currentNode;
             if(currentNode -> m_nodeData < nodeData && !(currentNode -> m_leftNull))
             {
-                /*printf("Left, NowData : %d\n", currentNode -> m_nodeData);*/
                 currentNode = currentNode -> m_leftPtr;
-                /*printf("Left, NewData : %d\n", currentNode -> m_nodeData);*/
             }
             else if (currentNode -> m_nodeData > nodeData && !(currentNode -> m_rightNull))
             {
-                /*printf("Right, NowData : %d\n", currentNode -> m_nodeData);*/
                 currentNode = currentNode -> m_rightPtr;
-                /*printf("Right, NewData : %d\n", currentNode -> m_nodeData);*/
             } else {break;}
         }
-        /*printf("Tree data : %d\n",currentNode -> m_nodeData);*/
 
         if(previousNode -> m_nodeData < nodeData)
         {
@@ -291,7 +231,7 @@ void BinaryTreeCreate(void){             /* Create binary tree which only has le
     int dataTest[8] = {1,5,4,3,2,6,7,8};
     for(index = 0; index < dataLen; index ++)
     {
-        g_DataTree = AddNodeTest(g_DataTree, dataTest[index]);    /* Insert data from beginning. */
+        g_DataTree = AddNode(g_DataTree, dataTest[index]);    /* Insert data from beginning. */
         printf("Index : %d\n", index);
     }
 
@@ -299,50 +239,50 @@ void BinaryTreeCreate(void){             /* Create binary tree which only has le
 
 /*======================================Binary tree visit=========================================*/
 
-void inorderPrintTree(btTree inorderDataTree){    /* Root in the middle. */
+void InorderPrintTree(btTree inorderDataTree){    /* Root in the middle. */
 
     if (inorderDataTree != NULL)
     {
         if (!(inorderDataTree -> m_leftNull))
         {
-            inorderPrintTree(inorderDataTree -> m_leftPtr);
+            InorderPrintTree(inorderDataTree -> m_leftPtr);
         } else {}
         printf("Element : %d\n", inorderDataTree -> m_nodeData);
         if (!(inorderDataTree -> m_rightNull))
         {
-            inorderPrintTree(inorderDataTree -> m_rightPtr);
+            InorderPrintTree(inorderDataTree -> m_rightPtr);
         } else {}
     } else {}
 }
 
-void preorderPrintTree(btTree preorderDataTree){    /* Root in the first place. */
+void PreorderPrintTree(btTree preorderDataTree){    /* Root in the first place. */
 
     if (preorderDataTree != NULL)
     {
         printf("Element : %d\n", preorderDataTree -> m_nodeData);
         if (!(preorderDataTree -> m_leftNull))
         {
-            preorderPrintTree(preorderDataTree -> m_leftPtr);
-        }
-        else if(!(preorderDataTree -> m_rightNull))
+            PreorderPrintTree(preorderDataTree -> m_leftPtr);
+        } else {}
+        if(!(preorderDataTree -> m_rightNull))
         {
-            preorderPrintTree(preorderDataTree -> m_rightPtr);
+            PreorderPrintTree(preorderDataTree -> m_rightPtr);
         } else {}
     } else {}
 }
 
-void postorderPrintTree(btTree postorderDataTree){    /* Root in the last place. */
+void PostorderPrintTree(btTree postorderDataTree){    /* Root in the last place. */
 
     if(postorderDataTree != NULL)
     {
         if (!(postorderDataTree -> m_leftNull))
         {
-            postorderPrintTree(postorderDataTree -> m_leftPtr);
+            PostorderPrintTree(postorderDataTree -> m_leftPtr);
             printf("Element : %d\n", postorderDataTree -> m_nodeData);
         } else {}
         if(!(postorderDataTree -> m_rightNull))
         {
-            postorderPrintTree(postorderDataTree -> m_rightPtr);
+            PostorderPrintTree(postorderDataTree -> m_rightPtr);
             printf("Element : %d\n", postorderDataTree -> m_nodeData);
         } else {}
         if((postorderDataTree -> m_leftNull) && (postorderDataTree -> m_rightNull))
@@ -352,7 +292,7 @@ void postorderPrintTree(btTree postorderDataTree){    /* Root in the last place.
     } else {}
 }
 
-void levelorderPrintTree(btTree levelorderDataTree){ /* Using the continuity of pointer data set to visit all nodes. */
+void LevelorderPrintTree(btTree levelorderDataTree){ /* Using the continuity of pointer data set to visit all nodes. */
 
     int printedF = -1;
     int printedB = -1;
@@ -390,23 +330,23 @@ void VisitBinaryTree(btTree dataTree, t_BinaryMethodType visitType){
     switch(visitType)
     {
         case 0:
-            inorderPrintTree(dataTree);
+            InorderPrintTree(dataTree);
             break;
         case 1:
-            preorderPrintTree(dataTree);
+            PreorderPrintTree(dataTree);
             break;
         case 2:
-            postorderPrintTree(dataTree);
+            PostorderPrintTree(dataTree);
             break;
         case 3:
-            levelorderPrintTree(dataTree);
+            LevelorderPrintTree(dataTree);
             break;
     };
 }
 
 /*======================================Binary tree copy==========================================*/
 
-btTree inorderCopyTree(btTree inorderSourceTree){
+btTree InorderCopyTree(btTree inorderSourceTree){
 
     if(inorderSourceTree == NULL)
     {
@@ -415,21 +355,21 @@ btTree inorderCopyTree(btTree inorderSourceTree){
     } else {}
     if(!inorderSourceTree -> m_leftNull)
     {
-        g_CopyTree -> m_leftPtr = inorderCopyTree(inorderSourceTree -> m_leftPtr);
+        g_CopyTree -> m_leftPtr = InorderCopyTree(inorderSourceTree -> m_leftPtr);
         g_CopyTree -> m_leftNull = 0;
     } else {}
     g_CopyTree -> m_nodeData = inorderSourceTree -> m_nodeData;
-    printf("Data from inorderCopyTree : %d\n", g_CopyTree -> m_nodeData);
+    printf("Data from InorderCopyTree : %d\n", g_CopyTree -> m_nodeData);
 
     if(!inorderSourceTree -> m_rightNull)
     {
-        g_CopyTree -> m_rightPtr = inorderCopyTree(inorderSourceTree -> m_rightPtr);
+        g_CopyTree -> m_rightPtr = InorderCopyTree(inorderSourceTree -> m_rightPtr);
         g_CopyTree -> m_rightNull = 0;
     } else {}
     return g_CopyTree;
 }
 
-btTree preorderCopyTree(btTree preorderSourceTree){
+btTree PreorderCopyTree(btTree preorderSourceTree){
 
     if(preorderSourceTree == NULL)
     {
@@ -437,22 +377,22 @@ btTree preorderCopyTree(btTree preorderSourceTree){
         return;
     } else {}
     g_CopyTree -> m_nodeData = preorderSourceTree -> m_nodeData;
-    printf("Data from preorderCopyTree : %d\n", g_CopyTree -> m_nodeData);
+    printf("Data from PreorderCopyTree : %d\n", g_CopyTree -> m_nodeData);
     if(!preorderSourceTree -> m_leftNull)
     {
-        g_CopyTree -> m_leftPtr = preorderCopyTree(preorderSourceTree -> m_leftPtr);
+        g_CopyTree -> m_leftPtr = PreorderCopyTree(preorderSourceTree -> m_leftPtr);
         g_CopyTree -> m_leftNull = 0;
     } else {}
 
     if(!preorderSourceTree -> m_rightNull)
     {
-        g_CopyTree -> m_rightPtr = preorderCopyTree(preorderSourceTree -> m_rightPtr);
+        g_CopyTree -> m_rightPtr = PreorderCopyTree(preorderSourceTree -> m_rightPtr);
         g_CopyTree -> m_rightNull = 0;
     } else {}
     return g_CopyTree;
 }
 
-btTree postorderCopyTree(btTree postorderSourceTree){
+btTree PostorderCopyTree(btTree postorderSourceTree){
 
     if(postorderSourceTree == NULL)
     {
@@ -462,18 +402,18 @@ btTree postorderCopyTree(btTree postorderSourceTree){
 
     if(!postorderSourceTree -> m_leftNull)
     {
-        g_CopyTree -> m_leftPtr = preorderCopyTree(postorderSourceTree -> m_leftPtr);
+        g_CopyTree -> m_leftPtr = PreorderCopyTree(postorderSourceTree -> m_leftPtr);
         g_CopyTree -> m_leftNull = 0;
     } else {}
 
     if(!postorderSourceTree -> m_rightNull)
     {
-        g_CopyTree -> m_rightPtr = preorderCopyTree(postorderSourceTree -> m_rightPtr);
+        g_CopyTree -> m_rightPtr = PreorderCopyTree(postorderSourceTree -> m_rightPtr);
         g_CopyTree -> m_rightNull = 0;
     } else {}
 
     g_CopyTree -> m_nodeData = postorderSourceTree -> m_nodeData;
-    printf("Data from postorderCopyTree : %d\n", g_CopyTree -> m_nodeData);
+    printf("Data from PostorderCopyTree : %d\n", g_CopyTree -> m_nodeData);
 
     return g_CopyTree;
 }
@@ -484,13 +424,13 @@ void CopyBinaryTree(btTree dataTree, t_BinaryMethodType visitType){
     switch(visitType)
     {
         case 0:
-            inorderCopyTree(dataTree);
+            InorderCopyTree(dataTree);
             break;
         case 1:
-            preorderCopyTree(dataTree);
+            PreorderCopyTree(dataTree);
             break;
         case 2:
-            postorderCopyTree(dataTree);
+            PostorderCopyTree(dataTree);
             break;
     };
 }
@@ -507,55 +447,116 @@ int CompareBinaryTree(btTree dataTreeOne, btTree dataTreeTwo){
 }
 
 /*=====================================Thread binary tree==========================================*/
-/*
+
+#if TEST_AREA
+
+btTree ThreadLoop(btTree originalDataTree){             /* Declare function before using.*/
+    btTree treeBuf = originalDataTree;
+    if(!(originalDataTree -> m_leftNull))
+    {
+        treeBuf -> m_leftPtr  = ThreadLoop(originalDataTree -> m_leftPtr);
+        printf("Thread direction: %d, Root : %d\n",(treeBuf -> m_leftPtr) -> m_nodeData, originalDataTree -> m_nodeData);
+        return treeBuf;
+    }
+    else
+    {
+        treeBuf = originalDataTree;
+        return treeBuf;
+    }
+    if(!(originalDataTree -> m_rightNull))
+    {
+        treeBuf -> m_rightPtr = ThreadLoop(originalDataTree -> m_rightPtr);
+        return treeBuf;
+    }
+    else
+    {
+        treeBuf = originalDataTree;
+        return treeBuf;
+    }
+}
+
 void ThreadBinaryTree(btTree originalDataTree){
-    btTree treeBuf;
-    if(!(originalDataTree -> m_leftNull))
-    {
-        treeBuf = ThreadLoop(originalDataTree -> m_leftPtr);
-        while(treeBuf -> m_leftNull)
-        {
-            treeBuf = ThreadLoop(treeBuf -> m_leftPtr);
-        }
-        treeBuf -> m_leftPtr = originalDataTree;
-        treeBuf -> m_leftNull = 0;
-    } else {}
-    if(!(originalDataTree -> m_rightNull))
-    {
-        treeBuf = ThreadLoop(originalDataTree -> m_rightPtr);
-        while(treeBuf -> m_rightNull)
-        {
-            treeBuf = ThreadLoop(treeBuf -> m_rightPtr);
-        }
-        treeBuf -> m_rightPtr = originalDataTree;
-    } else {}
+    g_threadTree = malloc(sizeof(t_TreeNode));                /* Initialize memory space for operating. */
+    g_threadTree = ThreadLoop(originalDataTree);
 }
 
+#endif
 
-btTree ThreadLoop(btTree originalDataTree){
-    btTree treeBuf;
-    if(!(originalDataTree -> m_leftNull))
+/*===========================================Heap=================================================*/
+
+void ExchangeNodes(t_TreeNode* nodeOne, t_TreeNode* nodeTwo) {
+    t_TreeNode* treeBuf = malloc(sizeof(t_TreeNode));
+    treeBuf = nodeOne;
+    nodeOne = nodeTwo;
+    nodeTwo = treeBuf;
+}
+
+btTree CheckNodeMax(btTree dataTree) {
+    t_TreeNode* treeBuf = dataTree;
+    if(!(treeBuf -> m_leftNull))
     {
-        treeBuf = ThreadLoop(originalDataTree -> m_leftPtr);
+        treeBuf = CheckNodeMax(treeBuf -> m_leftPtr);
+        if(treeBuf -> m_nodeData > dataTree -> m_nodeData)
+        {
+            ExchangeNodes(treeBuf, dataTree);
+        }
+        else {}
     }
     else
     {
-        treeBuf = originalDataTree;
         return treeBuf;
     }
-    if(!(originalDataTree -> m_rightNull))
+    if(!(treeBuf -> m_rightNull))
     {
-        treeBuf = ThreadLoop(originalDataTree -> m_rightPtr);
+        treeBuf = CheckNodeMax(treeBuf -> m_rightPtr);
+        if(treeBuf -> m_nodeData > dataTree -> m_nodeData)
+        {
+            ExchangeNodes(treeBuf, dataTree);
+        }
+        else {}
     }
     else
     {
-        treeBuf = originalDataTree;
         return treeBuf;
     }
 }
-*/
-/*============================================Sort================================================*/
 
+btTree CheckNodeMin(btTree dataTree) {
+    t_TreeNode* treeBuf = dataTree;
+    if(!(treeBuf -> m_leftNull))
+    {
+        treeBuf = CheckNodeMin(treeBuf -> m_leftPtr);
+        if(treeBuf -> m_nodeData < dataTree -> m_nodeData)
+        {
+            ExchangeNodes(treeBuf, dataTree);
+        }
+        else {}
+    }
+    else
+    {
+        return treeBuf;
+    }
+    if(!(treeBuf -> m_rightNull))
+    {
+        treeBuf = CheckNodeMin(treeBuf -> m_rightPtr);
+        if(treeBuf -> m_nodeData < dataTree -> m_nodeData)
+        {
+            ExchangeNodes(treeBuf, dataTree);
+        }
+        else {}
+    }
+    else
+    {
+        return treeBuf;
+    }
+}
+
+void BinaryTreeHeap(btTree dataTree, t_HeapType heapType){
+    t_TreeNode* treeBuf = dataTree;
+    treeBuf = heapType? CheckNodeMin(treeBuf):CheckNodeMax(treeBuf);
+}
+
+/*================================================================================================*/
 
 /*================================================================================================*/
 /* Main program */
@@ -567,9 +568,11 @@ int main(int argc, char *argv[]) {
 
     /* Binary tree */
     BinaryTreeCreate();
-    VisitBinaryTree(g_DataTree, m_inOrder);
-    CopyBinaryTree(g_DataTree, m_inOrder);
-    /*testField(1);*/
+    /*VisitBinaryTree(g_DataTree, m_inOrder);*/
+    /*CopyBinaryTree(g_DataTree, m_inOrder);*/
+    /*ThreadBinaryTree(g_DataTree);*/
+    BinaryTreeHeap(g_DataTree, m_MAX);
+    VisitBinaryTree(g_DataTree, m_preOrder);
 
 	system("pause");
 	return 0;
